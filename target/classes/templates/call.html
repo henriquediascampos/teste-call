@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link th:href="@{/styles/call.css}" rel="stylesheet" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+        integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
+        integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"
+        integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
+        crossorigin="anonymous"></script>
+    <title>Call Panel</title>
+</head>
+
+<body>
+    <form class="card">
+        <div class="alert alert-success none" role="alert">
+            Aeeee!!! boa 02!!
+        </div>
+        <div class="alert alert-danger none" role="alert">
+            Opa! deu ruim :(
+        </div>
+        <br>
+        <div id="config" class="card config-panel">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item active titulo" aria-current="page">CONFIGURAÇÃO</li>
+                </ol>
+            </nav>
+
+
+            <div class="form-group">
+                <label for="url">URL CAS</label>
+                <input type="urlcas" class="form-control config" id="urlcas" aria-describedby="urlHelp"
+                    placeholder="Insira Url" value="http://localhost:9091/cas/oauth2.0">
+            </div>
+            <div class="form-group">
+                <label for="client_id">CLIENT ID</label>
+                <input type="text" class="form-control config" id="client_id"
+                    placeholder="identificador de sistema no cas">
+            </div>
+            <div class="form-group">
+                <label for="client_secret">CLIENT SECRET</label>
+                <input type="text" class="form-control config" id="client_secret"
+                    placeholder="sercret do sistema registrado no cas">
+            </div>
+
+            <div class="form-group">
+                <label for="urlpanel">URL UNIQUE PANEL</label>
+                <input type="url" class="form-control config" id="urlpanel" placeholder="Insira Url Unique Panel"
+                    value="http://localhost:7575/api">
+            </div>
+        </div>
+        <br>
+        <div class="card form-call">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item active titulo" aria-current="page">DADOS DA CHAMADA</li>
+                </ol>
+            </nav>
+
+            <div class="form-group">
+                <label for="professional">Profissional</label>
+                <input class="form-control chamada" id="professional" value="profissional teste"
+                    placeholder="Insira Nome do profissinal de atendimento">
+            </div>
+            <div class="form-group">
+                <label for="local">Local de atendimento</label>
+                <input class="form-control chamada" id="local" placeholder="Insira Local de atendimento" value="sala 3">
+            </div>
+            <div class="form-group">
+                <label for="personal">Paciente</label>
+                <input class="form-control chamada" id="personal"
+                    placeholder="Insira o nome do paciente para ser chamado" value="Teste da silva">
+            </div>
+            <div class="form-group">
+                <label for="password">Senha</label>
+                <input class="form-control chamada" id="password" placeholder="Insira o senha da vez para ser chamada">
+            </div>
+            <div class="form-group">
+                <label for="priorityColor">Code de prioridade</label>
+                <input type="color" class="form-control chamada" id="priorityColor" value="#ffffff">
+            </div>
+            <div class="form-group">
+                <label for="panel">Painel</label>
+                <select onfocus="getpanel()" class="form-control" id="panel" aria-placeholder="teste"></select>
+            </div>
+            <div class="form-group">
+                <button id="btn" type='button' onclick="call()" class="btn btn-success">Chamar Painel</button>
+            </div>
+        </div>
+    </form>
+</body>
+
+<script>
+    function getpanel() {
+        let data = getConfi({});
+
+        var xhr = new XMLHttpRequest();
+        xhr.withCredentials = true;
+
+        xhr.addEventListener("readystatechange", function () {
+            if (this.readyState === 4) {
+                const painels = JSON.parse(this.responseText);
+                if (painels && painels.length) {
+                    const $select = document.getElementById('panel');
+                    $select.remove('all');
+
+                    painels.forEach(element => {
+                        const $option = document.createElement('option');
+                        $option.value = element.id;
+                        $option.innerText = element.description;
+                        $select.appendChild($option);
+                    });
+
+                }
+            }
+        });
+
+        xhr.open("POST", "http://localhost:8887/get-panel");
+        xhr.setRequestHeader("Content-Type", "application/json");
+
+        xhr.send(JSON.stringify(data));
+    }
+
+
+    function getConfi(data) {
+        const configs = document.getElementsByClassName('config');
+        for (let { value, id } of configs) {
+            if (value)
+                data[id] = value;
+        }
+
+        return data
+    }
+
+    function getparam(data) {
+        const chamadas = document.getElementsByClassName('chamada');
+        for (let { value, id } of chamadas) {
+            if (value)
+                data[id] = value;
+        }
+
+        data.panel = document.getElementById('panel').value;
+    }
+
+    function call() {
+        let data = getConfi({});
+        getparam(data);
+        if (!validate(data)) {
+            warning();
+        }
+
+        var xhr = new XMLHttpRequest();
+        xhr.withCredentials = true;
+
+        xhr.addEventListener("readystatechange", function () {
+            if (this.readyState === 4) {
+                if (this.responseText === "ok") {
+                    success();
+                } else {
+                    warning();
+                }
+            }
+        });
+
+        xhr.open("POST", "http://localhost:8887/call-panel");
+        xhr.setRequestHeader("Content-Type", "application/json");
+
+        xhr.send(JSON.stringify(data));
+
+    }
+
+    function warning() {
+        const alertList = document.querySelectorAll('.alert-danger')
+        alertList.forEach(function (alert) {
+            alert.classList.remove('none')
+            setTimeout(() => {
+                alert.classList.add('none')
+            }, 3000);
+        });
+
+    }
+
+    function success() {
+        const alertList = document.querySelectorAll('.alert-success')
+        alertList.forEach(function (alert) {
+            alert.classList.remove('none')
+            setTimeout(() => {
+                alert.classList.add('none')
+            }, 3000);
+        });
+    }
+
+    function validate(data) {
+        let valid = true;
+        const local = document.getElementById('local');
+        if (!local.value) {
+            valid = false
+            local.parentElement.classList.add('error-validate');
+        } else {
+            local.parentElement.classList.remove('error-validate');
+        }
+
+        const panel = document.getElementById('panel');
+        if (!panel.value) {
+            valid = false
+            panel.parentElement.classList.add('error-validate');
+        } else {
+            panel.parentElement.classList.remove('error-validate');
+        }
+
+        return valid;
+    }
+
+</script>
+
+</html>

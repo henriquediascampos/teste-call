@@ -1,0 +1,66 @@
+:root {
+    --primary: #009688
+    --accent: #ff4081
+    --remaining: #e5e5e5
+    --white: #FFFFFF
+}
+
+.card {
+    padding: 20px;
+    box-shadow: 3px 3px 8px;
+}
+
+.card label {
+    font-weight: 700;
+    color: rgb(250, 252, 252);
+}
+
+.config-panel {
+    background-color: #929295 !important;
+}
+
+.form-call {
+    background-color: #b5b5b5 !important;
+}
+
+.titulo {
+    font-weight: 700 !important;
+}
+
+#panel {
+    cursor: pointer;
+}
+
+.error-validate input::placeholder {
+    color: red !important;
+}
+
+.error-validate input::after {
+    content: "Este campo é de preenchimento obrigatório!";
+}
+
+.error-validate > label::after {
+    content: " ** Este campo é de preenchimento obrigatório!";
+    color: rgb(182, 88, 88) !important;
+}
+
+.none {
+    display: none;
+}
+
+.alert {
+    position: fixed !important;
+    z-index: 999;
+    animation: pisca .5s linear infinite;
+}
+
+
+@keyframes pisca {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.8;
+    }
+}
